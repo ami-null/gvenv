@@ -4,8 +4,33 @@ param(
     [string]$Command,
 
     [Parameter(Position=1)]
-    [string]$EnvName
+    [string]$EnvName,
+
+    [Parameter(ValueFromRemainingArguments=$true)]
+    [string[]]$RemainingArgs
 )
+
+
+# Parse extra args for upd
+if ($Command -eq "upd") {
+    if ($RemainingArgs.Count -eq 0) {
+        $Host.UI.WriteErrorLine("Please provide either --newest or -r <req_file> for upd.")
+        exit 1
+    }
+    $Mode = $RemainingArgs[0]
+    if ($Mode -eq "--r") {
+        if ($RemainingArgs.Count -lt 2) {
+            $Host.UI.WriteErrorLine("Please provide a requirements file. Usage: uvenv.ps1 upd <env_name> -r <requirements_file>")
+            exit 1
+        }
+        $ReqFile = $RemainingArgs[1]
+    }
+    elseif ($Mode -ne "--newest") {
+        $Host.UI.WriteErrorLine("Invalid mode '$Mode'. Allowed: --newest or -r <req_file>")
+        exit 1
+    }
+}
+
 
 # Resolve UVENV_DIR
 $UVENV_DIR = $Env:UVENV_DIR
@@ -17,6 +42,7 @@ if (-not (Test-Path $UVENV_DIR)) {
     New-Item -ItemType Directory -Path $UVENV_DIR | Out-Null
 }
 
+
 # Check uv exists for cr command
 function Ensure-uv {
     if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
@@ -24,6 +50,7 @@ function Ensure-uv {
         exit 1
     }
 }
+
 
 function Activate-Env {
 	if (-not $EnvName) {
@@ -68,9 +95,11 @@ switch ($Command) {
         uv venv $EnvName --directory $UVENV_DIR
     }
 
+
     "act" {
         Activate-Env
     }
+
 
     "ls" {
         Write-Host "Available environments in ${UVENV_DIR}:"
@@ -78,26 +107,40 @@ switch ($Command) {
             Write-Host $_.Name
         }
     }
-	
+
+
 	"upd" {
 		Ensure-uv
 		Activate-Env
-		$reqpath = Join-Path $UVENV_DIR ("." + $EnvName + ".txt")
-		uv pip freeze > $reqpath
-		(Get-Content $reqpath) -replace '(==.*)','' | Set-Content $reqpath
-		uv pip install -U -r $reqpath
+
+		if ($Mode -eq "--newest") {
+			$reqpath = Join-Path $UVENV_DIR ("." + $EnvName + ".txt")
+			uv pip freeze > $reqpath
+			(Get-Content $reqpath) -replace '(==.*)','' | Set-Content $reqpath
+			uv pip install -U -r $reqpath
+		}
+		elseif ($Mode -eq "--r") {
+			if (-not (Test-Path $ReqFile)) {
+				$Host.UI.WriteErrorLine("Requirements file '$ReqFile' does not exist.")
+				exit 1
+			}
+			uv pip install -U -r $ReqFile
+		}
+
 		deactivate
 	}
+
 
     Default {
         Write-Host @"
 uvenv.ps1 - Manage uv virtual environments
 
 Usage:
-    uvenv.ps1 cr <env_name>   Create a uv venv
-    uvenv.ps1 act <env_name>  Activate a uv venv
-    uvenv.ps1 upd <env_name>  Upgrade packages in the ven to their latest versions
-    uvenv.ps1 ls              List all uv venvs
+    uvenv.ps1 cr <env_name>                    Create a uv venv
+    uvenv.ps1 act <env_name>                   Activate a uv venv
+    uvenv.ps1 upd <env_name> --newest          Upgrade all packages in the venv to their latest versions
+    uvenv.ps1 upd <env_name> --req <req_file>  Upgrade packages in the venv based on the given requirements file
+    uvenv.ps1 ls                               List all uv venvs
 
 Environment variable:
     UVENV_DIR - Directory to store environments (defaults to ~\.uvenv)
