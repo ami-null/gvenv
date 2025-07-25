@@ -1,9 +1,13 @@
 # uvenv
 Wrapper script to create global venv (like conda) using uv.
 
-uv relies on project specific environements. However, I like to use the same environement for multiple projects. Conda/mamba etc are not as fast as uv. Which is why I created this project - the best of both worlds.
+uv relies on project specific environements. However, I like to use the same environement for multiple projects. Conda/mamba etc are not as fast as uv. Which is why I created this project - the best of both worlds. However, there is one caveat in the current implementation: one has to manage the `requirements` file of an environement manually, as opposed to how `uv` manages dependencies automatically for projects managed by `uv`. This shall change in a future implementation.
 
 You need to have python and uv installed for this script to work.
+
+## Roadmap
+- Port to bash
+- Add a command `uvenv install` that wraps `uv pip install` so that the the package list and version constraints can be captured and put into a requirements file.
 
 ## Installation
 
