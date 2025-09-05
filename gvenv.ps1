@@ -32,14 +32,14 @@ if ($Command -eq "upd") {
 }
 
 
-# Resolve UVENV_DIR
-$UVENV_DIR = $Env:UVENV_DIR
-if (-not $UVENV_DIR) {
-    $UVENV_DIR = Join-Path $HOME ".uvenv"
+# Resolve GVENV_DIR
+$GVENV_DIR = $Env:GVENV_DIR
+if (-not $GVENV_DIR) {
+    $GVENV_DIR = Join-Path $HOME ".uvenv"
 }
-if (-not (Test-Path $UVENV_DIR)) {
-    Write-Host "Creating virtual environment directory at $UVENV_DIR"
-    New-Item -ItemType Directory -Path $UVENV_DIR | Out-Null
+if (-not (Test-Path $GVENV_DIR)) {
+    Write-Host "Creating virtual environment directory at $GVENV_DIR"
+    New-Item -ItemType Directory -Path $GVENV_DIR | Out-Null
 }
 
 
@@ -58,7 +58,7 @@ function Activate-Env {
             exit 1
         }
 
-        $envPath = Join-Path $UVENV_DIR $EnvName
+        $envPath = Join-Path $GVENV_DIR $EnvName
         if (-not (Test-Path $envPath)) {
             $Host.UI.WriteErrorLine("Environment '$EnvName' does not exist at $envPath.`nRun 'uvenv.ps1 ls' to list available environments.")
             exit 1
@@ -83,7 +83,7 @@ switch ($Command) {
             exit 1
         }
 
-        $envPath = Join-Path $UVENV_DIR $EnvName
+        $envPath = Join-Path $GVENV_DIR $EnvName
         if (Test-Path $envPath) {
 			$Host.UI.WriteErrorLine("Environment '$EnvName' already exists at $envPath.`nUse 'uvenv.ps1 act $EnvName' to activate it.`nIf you want to overwrite, delete the existing environment first (proceed with caution).")
             exit 1
@@ -91,8 +91,8 @@ switch ($Command) {
 		
 		Ensure-uv
 
-        Write-Host "Creating uv venv '$EnvName' at $UVENV_DIR"
-        uv venv $EnvName --directory $UVENV_DIR
+        Write-Host "Creating uv venv '$EnvName' at $GVENV_DIR"
+        uv venv $EnvName --directory $GVENV_DIR
     }
 
 
@@ -102,8 +102,8 @@ switch ($Command) {
 
 
     "ls" {
-        Write-Host "Available environments in ${UVENV_DIR}:"
-        Get-ChildItem $UVENV_DIR -Directory | ForEach-Object {
+        Write-Host "Available environments in ${GVENV_DIR}:"
+        Get-ChildItem $GVENV_DIR -Directory | ForEach-Object {
             Write-Host $_.Name
         }
     }
@@ -114,7 +114,7 @@ switch ($Command) {
 		Activate-Env
 
 		if ($Mode -eq "--newest") {
-			$reqpath = Join-Path $UVENV_DIR ("." + $EnvName + ".txt")
+			$reqpath = Join-Path $GVENV_DIR ("." + $EnvName + ".txt")
 			uv pip freeze > $reqpath
 			(Get-Content $reqpath) -replace '(==.*)','' | Set-Content $reqpath
 			uv pip install -U -r $reqpath
@@ -143,7 +143,7 @@ Usage:
     uvenv.ps1 ls                               List all uv venvs
 
 Environment variable:
-    UVENV_DIR - Directory to store environments (defaults to ~\.uvenv)
+    GVENV_DIR - Directory to store environments (defaults to ~\.uvenv)
 
 "@
         Ensure-uv
