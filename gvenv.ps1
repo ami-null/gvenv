@@ -26,7 +26,7 @@ if ($Command -eq "upd") {
         $ReqFile = $RemainingArgs[1]
     }
     elseif ($Mode -ne "--newest") {
-        $Host.UI.WriteErrorLine("Invalid mode '$Mode'. Allowed: --newest or -r <req_file>")
+        $Host.UI.WriteErrorLine("Invalid mode '$Mode'. Allowed: --newest or --r <req_file>")
         exit 1
     }
 }
