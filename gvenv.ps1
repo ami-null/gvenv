@@ -3,33 +3,12 @@ param(
     [ValidateSet("cr", "act", "ls", "upd")]
     [string]$Command,
 
-    [Parameter(Position=1)]
-    [string]$EnvName,
+    # [Parameter(Position=1)]
+    # [string]$EnvName,
 
     [Parameter(ValueFromRemainingArguments=$true)]
     [string[]]$RemainingArgs
 )
-
-
-# Parse extra args for upd
-if ($Command -eq "upd") {
-    if ($RemainingArgs.Count -eq 0) {
-        $Host.UI.WriteErrorLine("Please provide either --newest or --r <req_file> for upd.")
-        exit 1
-    }
-    $Mode = $RemainingArgs[0]
-    if ($Mode -eq "--r") {
-        if ($RemainingArgs.Count -lt 2) {
-            $Host.UI.WriteErrorLine("Please provide a requirements file. Usage: uvenv.ps1 upd <env_name> --r <requirements_file>")
-            exit 1
-        }
-        $ReqFile = $RemainingArgs[1]
-    }
-    elseif ($Mode -ne "--newest") {
-        $Host.UI.WriteErrorLine("Invalid mode '$Mode'. Allowed: --newest or --r <req_file>")
-        exit 1
-    }
-}
 
 
 # Resolve GVENV_DIR
@@ -43,10 +22,41 @@ if (-not (Test-Path $GVENV_DIR)) {
 }
 
 
-# Check uv exists for cr command
+# function to check if uv exists
 function Ensure-uv {
     if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
         $Host.UI.WriteErrorLine("'uv' is not installed or not in PATH. Please install uv first.")
+        exit 1
+    }
+}
+
+
+if (($Command -eq "cr") -or ($Command -eq "act") -or ($Command -eq "upd")){
+	if ($RemainingArgs.Count -eq 0) {
+        $Host.UI.WriteErrorLine("Please provide the environment name.")
+        exit 1
+    } else {
+		$EnvName = $RemainingArgs[0]
+	}
+}
+
+
+# Parse extra args for upd
+if ($Command -eq "upd") {
+    if ($RemainingArgs.Count -eq 1) {
+        $Host.UI.WriteErrorLine("Please provide either --newest or --r <req_file> for upd.")
+        exit 1
+    }
+    $Mode = $RemainingArgs[1]
+    if ($Mode -eq "--r") {
+        if ($RemainingArgs.Count -lt 2) {
+            $Host.UI.WriteErrorLine("Please provide a requirements file. Usage: uvenv.ps1 upd <env_name> --r <requirements_file>")
+            exit 1
+        }
+        $ReqFile = $RemainingArgs[2]
+    }
+    elseif ($Mode -ne "--newest") {
+        $Host.UI.WriteErrorLine("Invalid mode '$Mode'. Allowed: --newest or --r <req_file>")
         exit 1
     }
 }
