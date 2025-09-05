@@ -14,13 +14,13 @@ param(
 # Parse extra args for upd
 if ($Command -eq "upd") {
     if ($RemainingArgs.Count -eq 0) {
-        $Host.UI.WriteErrorLine("Please provide either --newest or -r <req_file> for upd.")
+        $Host.UI.WriteErrorLine("Please provide either --newest or --r <req_file> for upd.")
         exit 1
     }
     $Mode = $RemainingArgs[0]
     if ($Mode -eq "--r") {
         if ($RemainingArgs.Count -lt 2) {
-            $Host.UI.WriteErrorLine("Please provide a requirements file. Usage: uvenv.ps1 upd <env_name> -r <requirements_file>")
+            $Host.UI.WriteErrorLine("Please provide a requirements file. Usage: uvenv.ps1 upd <env_name> --r <requirements_file>")
             exit 1
         }
         $ReqFile = $RemainingArgs[1]
