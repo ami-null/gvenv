@@ -11,6 +11,16 @@ param(
 )
 
 
+if (($Command -eq "cr") -or ($Command -eq "act") -or ($Command -eq "updn")){
+	if ($RemainingArgs.Count -eq 0) {
+        $Host.UI.WriteErrorLine("Please provide the environment name.")
+        exit 1
+    } else {
+		$EnvName = $RemainingArgs[0]
+	}
+}
+
+
 # Resolve GVENV_DIR
 $GVENV_DIR = $Env:GVENV_DIR
 if (-not $GVENV_DIR) {
@@ -28,16 +38,6 @@ function Ensure-uv {
         $Host.UI.WriteErrorLine("'uv' is not installed or not in PATH. Please install uv first.")
         exit 1
     }
-}
-
-
-if (($Command -eq "cr") -or ($Command -eq "act") -or ($Command -eq "updn")){
-	if ($RemainingArgs.Count -eq 0) {
-        $Host.UI.WriteErrorLine("Please provide the environment name.")
-        exit 1
-    } else {
-		$EnvName = $RemainingArgs[0]
-	}
 }
 
 
