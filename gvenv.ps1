@@ -25,7 +25,7 @@ if (($Command -eq "cr") -or ($Command -eq "act") -or ($Command -eq "updn")){
 # Resolve GVENV_DIR
 $GVENV_DIR = $Env:GVENV_DIR
 if (-not $GVENV_DIR) {
-    $GVENV_DIR = Join-Path $HOME ".uvenv"
+    $GVENV_DIR = Join-Path $HOME ".gvenv"
 }
 if (-not (Test-Path $GVENV_DIR)) {
     Write-Host "Creating virtual environment directory at $GVENV_DIR"
@@ -44,13 +44,13 @@ function Ensure-uv {
 
 function Activate-Env {
 	# if (-not $EnvName) {
-            # $Host.UI.WriteErrorLine("Please provide an environment name. Usage: uvenv.ps1 act <env_name>")
+            # $Host.UI.WriteErrorLine("Please provide an environment name. Usage: gvenv.ps1 act <env_name>")
             # exit 1
         # }
 
         $envPath = Join-Path $GVENV_DIR $EnvName
         if (-not (Test-Path $envPath)) {
-            $Host.UI.WriteErrorLine("Environment '$EnvName' does not exist at $envPath.`nRun 'uvenv.ps1 ls' to list available environments.")
+            $Host.UI.WriteErrorLine("Environment '$EnvName' does not exist at $envPath.`nRun 'gvenv.ps1 ls' to list available environments.")
             exit 1
         }
 
@@ -69,13 +69,13 @@ function Activate-Env {
 switch ($Command) {
     "cr" {
         # if (-not $EnvName) {
-			# $Host.UI.WriteErrorLine("Please provide an environment name. Usage: uvenv.ps1 cr <env_name>")
+			# $Host.UI.WriteErrorLine("Please provide an environment name. Usage: gvenv.ps1 cr <env_name>")
             # exit 1
         # }
 
         $envPath = Join-Path $GVENV_DIR $EnvName
         if (Test-Path $envPath) {
-			$Host.UI.WriteErrorLine("Environment '$EnvName' already exists at $envPath.`nUse 'uvenv.ps1 act $EnvName' to activate it.`nIf you want to overwrite, delete the existing environment first (proceed with caution).")
+			$Host.UI.WriteErrorLine("Environment '$EnvName' already exists at $envPath.`nUse 'gvenv.ps1 act $EnvName' to activate it.`nIf you want to overwrite, delete the existing environment first (proceed with caution).")
             exit 1
         }
 		
@@ -114,16 +114,16 @@ switch ($Command) {
 
     Default {
         Write-Host @"
-uvenv.ps1 - Manage uv virtual environments
+gvenv.ps1 - Manage uv virtual environments
 
 Usage:
-    uvenv.ps1 cr <env_name>          Create a uv venv
-    uvenv.ps1 act <env_name>         Activate a uv venv
-    uvenv.ps1 updn <env_name>        Upgrade all packages in the venv to their latest versions
-    uvenv.ps1 ls                     List all uv venvs
+    gvenv.ps1 cr <env_name>          Create a uv venv
+    gvenv.ps1 act <env_name>         Activate a uv venv
+    gvenv.ps1 updn <env_name>        Upgrade all packages in the venv to their latest versions
+    gvenv.ps1 ls                     List all venvs created with gvenv
 
 Environment variable:
-    GVENV_DIR - Directory to store environments (defaults to ~\.uvenv)
+    GVENV_DIR - Directory to store environments (defaults to ~\.gvenv)
 
 "@
         Ensure-uv
