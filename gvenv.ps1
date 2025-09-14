@@ -44,19 +44,20 @@ function Ensure-uv {
 
 function Activate-Env {
 	$envPath = Join-Path $GVENV_DIR $EnvName
-        if (-not (Test-Path $envPath)) {
-            $Host.UI.WriteErrorLine("Environment '$EnvName' does not exist at $envPath.`nRun 'gvenv.ps1 ls' to list available environments.")
-            exit 1
-        }
+	
+	if (-not (Test-Path $envPath)) {
+		$Host.UI.WriteErrorLine("Environment '$EnvName' does not exist at $envPath.`nRun 'gvenv.ps1 ls' to list available environments.")
+		exit 1
+	}
 
-        $activateScript = Join-Path $envPath "Scripts\Activate.ps1"
-        if (-not (Test-Path $activateScript)) {
-            $Host.UI.WriteErrorLine("Activation script not found at $activateScript")
-            exit 1
-        }
+	$activateScript = Join-Path $envPath "Scripts\Activate.ps1"
+	if (-not (Test-Path $activateScript)) {
+		$Host.UI.WriteErrorLine("Activation script not found at $activateScript")
+		exit 1
+	}
 
-        Write-Host "Activating environment '$EnvName'"
-        & $activateScript
+	Write-Host "Activating environment '$EnvName'"
+	& $activateScript
 }
 
 
