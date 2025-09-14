@@ -41,27 +41,6 @@ if (($Command -eq "cr") -or ($Command -eq "act") -or ($Command -eq "updn")){
 }
 
 
-# Parse extra args for upd
-# if ($Command -eq "upd") {
-    # if ($RemainingArgs.Count -eq 1) {
-        # $Host.UI.WriteErrorLine("Please provide either --newest or --r <req_file> for upd.")
-        # exit 1
-    # }
-    # $Mode = $RemainingArgs[1]
-    # if ($Mode -eq "--r") {
-        # if ($RemainingArgs.Count -lt 2) {
-            # $Host.UI.WriteErrorLine("Please provide a requirements file. Usage: uvenv.ps1 upd <env_name> --r <requirements_file>")
-            # exit 1
-        # }
-        # $ReqFile = $RemainingArgs[2]
-    # }
-    # elseif ($Mode -ne "--newest") {
-        # $Host.UI.WriteErrorLine("Invalid mode '$Mode'. Allowed: --newest or --r <req_file>")
-        # exit 1
-    # }
-# }
-
-
 function Activate-Env {
 	if (-not $EnvName) {
             $Host.UI.WriteErrorLine("Please provide an environment name. Usage: uvenv.ps1 act <env_name>")
@@ -127,20 +106,6 @@ switch ($Command) {
 		uv pip freeze > $reqpath
 		(Get-Content $reqpath) -replace '(==.*)','' | Set-Content $reqpath
 		uv pip install -U -r $reqpath
-
-		# if ($Mode -eq "--newest") {
-			# $reqpath = Join-Path $GVENV_DIR ("." + $EnvName + ".txt")
-			# uv pip freeze > $reqpath
-			# (Get-Content $reqpath) -replace '(==.*)','' | Set-Content $reqpath
-			# uv pip install -U -r $reqpath
-		# }
-		# elseif ($Mode -eq "--r") {
-			# if (-not (Test-Path $ReqFile)) {
-				# $Host.UI.WriteErrorLine("Requirements file '$ReqFile' does not exist.")
-				# exit 1
-			# }
-			# uv pip install -U -r $ReqFile
-		# }
 
 		deactivate
 	}
