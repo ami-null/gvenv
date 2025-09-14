@@ -43,12 +43,7 @@ function Ensure-uv {
 
 
 function Activate-Env {
-	# if (-not $EnvName) {
-            # $Host.UI.WriteErrorLine("Please provide an environment name. Usage: gvenv.ps1 act <env_name>")
-            # exit 1
-        # }
-
-        $envPath = Join-Path $GVENV_DIR $EnvName
+	$envPath = Join-Path $GVENV_DIR $EnvName
         if (-not (Test-Path $envPath)) {
             $Host.UI.WriteErrorLine("Environment '$EnvName' does not exist at $envPath.`nRun 'gvenv.ps1 ls' to list available environments.")
             exit 1
