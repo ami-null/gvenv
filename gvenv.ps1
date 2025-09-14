@@ -2,10 +2,7 @@ param(
     [Parameter(Position=0)]
     [ValidateSet("cr", "act", "ls", "updn")]
     [string]$Command,
-
-    # [Parameter(Position=1)]
-    # [string]$EnvName,
-
+	
     [Parameter(ValueFromRemainingArguments=$true)]
     [string[]]$RemainingArgs
 )
@@ -13,9 +10,13 @@ param(
 
 if (($Command -eq "cr") -or ($Command -eq "act") -or ($Command -eq "updn")){
 	if ($RemainingArgs.Count -eq 0) {
-        $Host.UI.WriteErrorLine("Please provide the environment name.")
+        $Host.UI.WriteErrorLine("Please provide the environment name.`nUsage: gvenv.ps1 $Command <env_name>")
         exit 1
-    } else {
+    } elseif ($RemainingArgs.Count -gt 1){
+		$Host.UI.WriteErrorLine("$Command only takes a single argument (environt name).`nUsage: gvenv.ps1 $Command <env_name>")
+		exit 1
+	}
+	else {
 		$EnvName = $RemainingArgs[0]
 	}
 }
@@ -42,10 +43,10 @@ function Ensure-uv {
 
 
 function Activate-Env {
-	if (-not $EnvName) {
-            $Host.UI.WriteErrorLine("Please provide an environment name. Usage: uvenv.ps1 act <env_name>")
-            exit 1
-        }
+	# if (-not $EnvName) {
+            # $Host.UI.WriteErrorLine("Please provide an environment name. Usage: uvenv.ps1 act <env_name>")
+            # exit 1
+        # }
 
         $envPath = Join-Path $GVENV_DIR $EnvName
         if (-not (Test-Path $envPath)) {
@@ -67,10 +68,10 @@ function Activate-Env {
 # Handle commands
 switch ($Command) {
     "cr" {
-        if (-not $EnvName) {
-			$Host.UI.WriteErrorLine("Please provide an environment name. Usage: uvenv.ps1 cr <env_name>")
-            exit 1
-        }
+        # if (-not $EnvName) {
+			# $Host.UI.WriteErrorLine("Please provide an environment name. Usage: uvenv.ps1 cr <env_name>")
+            # exit 1
+        # }
 
         $envPath = Join-Path $GVENV_DIR $EnvName
         if (Test-Path $envPath) {
