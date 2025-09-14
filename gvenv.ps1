@@ -68,18 +68,13 @@ function Activate-Env {
 # Handle commands
 switch ($Command) {
     "cr" {
-        # if (-not $EnvName) {
-			# $Host.UI.WriteErrorLine("Please provide an environment name. Usage: gvenv.ps1 cr <env_name>")
-            # exit 1
-        # }
-
-        $envPath = Join-Path $GVENV_DIR $EnvName
+		Ensure-uv
+		
+		$envPath = Join-Path $GVENV_DIR $EnvName
         if (Test-Path $envPath) {
 			$Host.UI.WriteErrorLine("Environment '$EnvName' already exists at $envPath.`nUse 'gvenv.ps1 act $EnvName' to activate it.`nIf you want to overwrite, delete the existing environment first (proceed with caution).")
             exit 1
         }
-		
-		Ensure-uv
 
         Write-Host "Creating uv venv '$EnvName' at $GVENV_DIR"
         uv venv $EnvName --directory $GVENV_DIR
